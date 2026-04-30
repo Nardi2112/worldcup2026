@@ -25,7 +25,7 @@ export default async function AdminPage() {
     <main className="min-h-screen bg-gray-950 text-white px-4 py-8 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-1">⚙️ Admin — Match Results</h1>
       <p className="text-gray-500 text-sm mb-6">Enter actual match scores</p>
-      <AdminClient matches={matches ?? []} />
+      <AdminClient matches={(matches ?? []) as any} />
     </main>
   )
 }

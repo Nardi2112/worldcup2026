@@ -85,7 +85,7 @@ export default async function ResultsPage() {
                   }`}>
                     <div className="flex items-center gap-2 text-sm">
                       {/* home team */}
-                      <span className="flex-1 truncate text-xs">{match.home_team?.name}</span>
+                      <span className="flex-1 truncate text-xs">{(match.home_team as any)?.name}</span>
 
                       {/* actual result */}
                       <div className="flex items-center gap-1">
@@ -95,7 +95,7 @@ export default async function ResultsPage() {
                       </div>
 
                       {/* away team */}
-                      <span className="flex-1 text-right truncate text-xs">{match.away_team?.name}</span>
+                      <span className="flex-1 text-right truncate text-xs">{(match.away_team as any)?.name}</span>
                     </div>
 
                     {/* prediction row */}

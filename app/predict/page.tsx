@@ -32,7 +32,7 @@ export default async function PredictPage() {
   return (
     <main className="min-h-screen bg-gray-950 text-white px-4 py-8 max-w-md mx-auto">
       <h1 className="text-xl font-bold mb-6">🎯 Predict Matches</h1>
-      <PredictForm matches={matches ?? []} predictions={predictionsMap} />
+      <PredictForm matches={(matches ?? []) as any} predictions={predictionsMap} />
     </main>
   )
 }
