@@ -6,15 +6,12 @@ import { createClient } from '@/lib/supabase/client'
 export default function AuthGuard() {
   useEffect(() => {
     const supabase = createClient()
-    let redirected = false
-
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session && !redirected) {
-        redirected = true
+      console.log('AuthGuard session:', session ? 'found' : 'null')
+      if (!session) {
         window.location.href = '/auth'
       }
     })
   }, [])
-
   return null
 }
