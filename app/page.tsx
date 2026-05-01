@@ -1,29 +1,29 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Countdown from '@/components/Countdown'
+import AuthGuard from '@/components/AuthGuard'
 
 export default async function Home() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
 
-  const { data: profile } = await supabase
+  const profile = user ? await supabase
     .from('profiles')
     .select('display_name')
     .eq('id', user.id)
-    .single()
+    .single().then(r => r.data) : null
 
   // quick stats
-  const { count: predictedCount } = await supabase
+  const { count: predictedCount } = user ? await supabase
     .from('predictions')
     .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
+    .eq('user_id', user.id) : { count: 0 }
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
+      <AuthGuard />
       {/* Hero */}
       <div className="bg-gradient-to-b from-green-900/40 to-gray-950 px-4 pt-10 pb-6 text-center">
         <div className="text-5xl mb-2">⚽</div>
@@ -35,7 +35,7 @@ export default async function Home() {
       {/* Welcome */}
       <div className="px-4 py-4 max-w-md mx-auto">
         <p className="text-gray-400 text-sm mb-4">
-          Welcome back, <a href="/profile" className="text-white font-semibold hover:text-green-400">{profile?.display_name ?? user.email}</a>
+          Welcome back, <a href="/profile" className="text-white font-semibold hover:text-green-400">{profile?.display_name ?? user?.email}</a>
         </p>
 
         {/* Quick stats */}
