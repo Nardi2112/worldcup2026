@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import AuthGuard from '@/components/AuthGuard'
 import BonusForm from './BonusForm'
 
 export default async function BonusPage() {

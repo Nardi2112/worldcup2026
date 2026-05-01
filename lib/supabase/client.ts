@@ -1,19 +1,13 @@
-import { createClient as createSupabaseClient, SupabaseClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-let client: SupabaseClient | null = null
+// Singleton to avoid multiple instances
+let _client: ReturnType<typeof createSupabaseClient> | null = null
 
 export function createClient() {
-  if (client) return client
-  client = createSupabaseClient(
+  if (_client) return _client
+  _client = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        persistSession: true,
-        storageKey: 'wc2026-auth',
-        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      }
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  return client
+  return _client
 }

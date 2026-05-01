@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import AuthGuard from '@/components/AuthGuard'
 import ProfileClient from './ProfileClient'
 
 export default async function ProfilePage() {
