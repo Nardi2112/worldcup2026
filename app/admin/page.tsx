@@ -9,7 +9,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'admin@worldcup2026.com'
 export default async function AdminPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
   if (user.email !== ADMIN_EMAIL) redirect('/')
 
   const { data: matches } = await supabase

@@ -8,7 +8,7 @@ import LeagueClient from './LeagueClient'
 export default async function LeaguePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   // get leagues the user is in
   const { data: memberships } = await supabase

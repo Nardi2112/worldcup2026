@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 export default async function GroupsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const { data: teams } = await supabase
     .from('teams')

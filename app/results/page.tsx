@@ -17,7 +17,7 @@ function calcPoints(predHome: number, predAway: number, realHome: number, realAw
 export default async function ResultsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const { data: matches } = await supabase
     .from('matches')

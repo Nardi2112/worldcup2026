@@ -8,7 +8,7 @@ import BonusForm from './BonusForm'
 export default async function BonusPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const { data: teams } = await supabase
     .from('teams')

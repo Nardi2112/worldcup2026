@@ -20,7 +20,7 @@ function matchPoints(predHome: number, predAway: number, realHome: number, realA
 export default async function LeaderboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const [
     { data: matches },

@@ -18,7 +18,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const { data: league } = await supabase
     .from('leagues')

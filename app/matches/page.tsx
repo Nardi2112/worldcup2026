@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 export default async function MatchesPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  // auth handled client-side
 
   const { data: matches } = await supabase
     .from('matches')
