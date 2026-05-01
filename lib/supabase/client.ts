@@ -1,6 +1,5 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-// Singleton to avoid multiple instances
 let _client: ReturnType<typeof createSupabaseClient> | null = null
 
 export function createClient() {
