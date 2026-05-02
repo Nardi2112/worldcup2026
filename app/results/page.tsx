@@ -32,7 +32,7 @@ export default async function ResultsPage() {
   const { data: myPredictions } = await supabase
     .from('predictions')
     .select('match_id, predicted_home, predicted_away')
-    .eq('user_id', user.id)
+    .eq('user_id', user?.id ?? '')
 
   const predMap: Record<string, { home: number; away: number }> = {}
   for (const p of myPredictions ?? []) {
