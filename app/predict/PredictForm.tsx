@@ -37,8 +37,12 @@ export default function PredictForm({ matches, predictions }: Props) {
     if (v.home === '' || v.away === '') return
     setSaving(matchId)
 
+    const { data: { session } } = await supabase.auth.getSession()
+    const uid = session?.user?.id
+    if (!uid) { setSaving(null); return }
+
     await supabase.from('predictions').upsert({
-      user_id: (await supabase.auth.getUser()).data.user!.id,
+      user_id: uid,
       match_id: matchId,
       predicted_home: parseInt(v.home),
       predicted_away: parseInt(v.away),
