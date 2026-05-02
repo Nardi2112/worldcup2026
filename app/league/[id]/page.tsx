@@ -33,7 +33,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
     .from('league_members')
     .select('user_id')
     .eq('league_id', id)
-    .eq('user_id', user.id)
+    .eq('user_id', user?.id ?? '')
     .single()
 
   if (!membership) redirect('/league')
@@ -78,7 +78,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   }
 
   const leaderboard = memberIds
-    .map(uid => ({ uid, name: profileMap[uid] ?? 'Unknown', pts: userPts[uid] ?? 0, isMe: uid === user.id }))
+    .map(uid => ({ uid, name: profileMap[uid] ?? 'Unknown', pts: userPts[uid] ?? 0, isMe: uid === user?.id }))
     .sort((a, b) => b.pts - a.pts)
 
   return (

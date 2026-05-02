@@ -10,7 +10,7 @@ export default async function AdminPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   // auth handled client-side
-  if (user.email !== ADMIN_EMAIL) redirect('/')
+  if (user?.email !== ADMIN_EMAIL) redirect('/')
 
   const { data: matches } = await supabase
     .from('matches')

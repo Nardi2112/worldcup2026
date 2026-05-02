@@ -18,7 +18,7 @@ export default async function BonusPage() {
   const { data: existing } = await supabase
     .from('bonus_predictions')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', user?.id ?? '')
 
   return (
     <main className="min-h-screen bg-gray-950 text-white px-4 py-8 max-w-md mx-auto">

@@ -104,7 +104,7 @@ export default async function LeaderboardPage() {
         name: p.display_name,
         ...s,
         total: s.groupPts + s.knockoutPts + s.bonusPts,
-        isMe: p.id === user.id,
+        isMe: p.id === user?.id,
       }
     })
     .sort((a, b) => b.total - a.total || b.exact - a.exact)
