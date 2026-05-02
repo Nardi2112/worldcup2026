@@ -15,11 +15,19 @@ export default async function SimulationPage() {
     .select('id, name, group_name')
     .order('group_name')
 
-  const { data: matches } = await supabase
+  const { data: matchesRaw } = await supabase
     .from('matches')
-    .select('id, match_number, home_team_id, away_team_id, match_time, home_score, away_score, status, stage')
+    .select('id, match_number, home_team_id, away_team_id, match_time, stage')
     .eq('stage', 'group')
     .order('match_number')
+
+  // Strip scores so simulation starts empty
+  const matches = (matchesRaw ?? []).map(m => ({
+    ...m,
+    home_score: null,
+    away_score: null,
+    status: 'scheduled',
+  }))
 
   return (
     <main className="min-h-screen bg-gray-950 text-white px-4 py-8 max-w-md mx-auto">
