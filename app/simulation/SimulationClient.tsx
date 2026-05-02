@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { calcGroupStandings, getBestThird } from '@/lib/simulation/groupLogic'
 import { SimMatch, MatchResult } from '@/lib/simulation/types'
 import BracketView from './BracketView'
+import { createClient } from '@/lib/supabase/client'
 
 type Props = {
   teams: { id: string; name: string; group_name: string }[]
@@ -13,11 +14,12 @@ type Props = {
     match_time: string; home_score: number | null; away_score: number | null
     status: string; stage: string
   }[]
+  userId: string
 }
 
 const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L']
 
-export default function SimulationClient({ teams, matches }: Props) {
+export default function SimulationClient({ teams, matches, userId }: Props) {
   const teamMap = useMemo(() => {
     const m: Record<string, string> = {}
     for (const t of teams) m[t.id] = t.name
@@ -45,6 +47,28 @@ export default function SimulationClient({ teams, matches }: Props) {
   })
 
   const [activeGroup, setActiveGroup] = useState('A')
+
+  const [saving, setSaving] = useState(false)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+
+  async function saveSimulation() {
+    if (!userId) return
+    setSaving(true)
+    const supabase = createClient()
+    const upserts = Object.entries(results)
+      .filter(([, r]) => r.home !== null && r.away !== null)
+      .map(([match_id, r]) => ({
+        user_id: userId,
+        match_id,
+        home_score: r.home!,
+        away_score: r.away!,
+      }))
+    if (upserts.length > 0) {
+      await supabase.from('simulation_results').upsert(upserts, { onConflict: 'user_id,match_id' })
+    }
+    setSaving(false)
+    setLastSaved(new Date())
+  }
 
   function fillRandom() {
     setResults(r => {
@@ -130,8 +154,14 @@ export default function SimulationClient({ teams, matches }: Props) {
         <button onClick={clearAll} className="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm py-2 rounded-lg transition-colors">
           🗑 Clear
         </button>
+        <button onClick={saveSimulation} disabled={saving} className="flex-1 bg-green-700 hover:bg-green-600 disabled:opacity-50 text-white text-sm py-2 rounded-lg transition-colors">
+          {saving ? '...' : '💾 Save'}
+        </button>
       </div>
-      <p className="text-xs text-gray-500 mb-6">{filledCount} / {totalCount} matches entered</p>
+      <p className="text-xs text-gray-500 mb-6">
+        {filledCount} / {totalCount} matches entered
+        {lastSaved && <span className="ml-2 text-green-500">· Saved {lastSaved.toLocaleTimeString()}</span>}
+      </p>
 
       {/* All groups */}
       {GROUPS.map(grp => {
