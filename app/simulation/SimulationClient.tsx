@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { calcGroupStandings, getBestThird } from '@/lib/simulation/groupLogic'
 import { SimMatch, MatchResult } from '@/lib/simulation/types'
 import BracketView from './BracketView'
@@ -51,18 +51,41 @@ export default function SimulationClient({ teams, matches, userId }: Props) {
   const [saving, setSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
+  // Load saved simulation from DB on mount
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session?.user?.id) return
+      const { data } = await supabase
+        .from('simulation_results')
+        .select('match_id, home_score, away_score')
+        .eq('user_id', session.user.id)
+      if (data && data.length > 0) {
+        setResults(r => {
+          const updated = { ...r }
+          for (const s of data) {
+            updated[s.match_id] = { home: s.home_score, away: s.away_score }
+          }
+          return updated
+        })
+      }
+    })
+  }, [])
+
   async function saveSimulation() {
-    if (!userId) {
-      console.log('No userId, cannot save')
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const uid = session?.user?.id
+    if (!uid) {
+      console.log('No session, cannot save')
       return
     }
-    console.log('Saving for userId:', userId)
+    console.log('Saving for userId:', uid)
     setSaving(true)
-    const supabase = createClient()
     const upserts = Object.entries(results)
       .filter(([, r]) => r.home !== null && r.away !== null)
       .map(([match_id, r]) => ({
-        user_id: userId,
+        user_id: uid,
         match_id,
         home_score: r.home!,
         away_score: r.away!,
