@@ -52,7 +52,11 @@ export default function SimulationClient({ teams, matches, userId }: Props) {
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
 
   async function saveSimulation() {
-    if (!userId) return
+    if (!userId) {
+      console.log('No userId, cannot save')
+      return
+    }
+    console.log('Saving for userId:', userId)
     setSaving(true)
     const supabase = createClient()
     const upserts = Object.entries(results)
